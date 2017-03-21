@@ -1,6 +1,4 @@
 import socket
-import socketserver
-import select
 
 host = ''
 port = 12800
@@ -10,7 +8,7 @@ con.bind((host, port))
 con.listen( 5 )
 print( "this is connected on port {}".format(port))
 
-link, adress = s.accept()
+link, adress = con.accept()
 while true :
     data = link.recv(1024)
     if not data: break
