@@ -1,9 +1,9 @@
 import socket
-from tkinter import *
+from Tkinter import *
 
 aff = Tk()
 client = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
-host = client.gethostname()
+host = 'localhost'
 port = 12800
 
 client.connect((host, port))
