@@ -1,17 +1,30 @@
 import socket
+import sys
 
-host = ''
-port = 12800
+class Server :
+    host = 'localhost'
+    port = 12800
+    clients = []
 
-con = socket.socket( socket.AF_INET, socket.SOCK_STREAM)
-con.bind((host, port))
-con.listen( 5 )
-print( "this is connected on port {}".format(port))
+    def __init__(self):
+        try :
+            con = socket.socket( socket.AF_INET, socket.SOCK_STREAM)
+        except socket.error, msg :
+            print "Failed"
+            sys.exit()
+        con.bind((self.host, self.port))
+        con.listen( 5 )
+        print( "this is connected on port {}".format(port))
+        link, adress = con.accept()
+        while true :
+            data = link.recv(1024)
+            if not data: break
+            rep = "display : {}".format(data)
+            print rep
+            link.send(rep)
+        link.close()
 
-link, adress = con.accept()
-while true :
-    data = link.recv(1024)
-    if not data: break
-    print "display : {}".format(data)
-    link.send(data)
-link.close()
+    def _get_client(self):
+        return self.clients
+
+server = Server()
