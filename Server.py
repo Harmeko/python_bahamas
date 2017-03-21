@@ -14,7 +14,7 @@ class Server :
             sys.exit()
         con.bind((self.host, self.port))
         con.listen( 5 )
-        print( "this is connected on port {}".format(port))
+        print( "this is connected on port {}".format(self.port))
         link, adress = con.accept()
         while true :
             data = link.recv(1024)
