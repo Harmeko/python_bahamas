@@ -1,5 +1,6 @@
 import socket
 from Tkinter import *
+import sys
 
 
 class Client :
@@ -8,10 +9,20 @@ class Client :
 
     def __init__(self):
         aff = Tk()
-        self.sock, client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try :
+            client = socket.socket( socket.AF_INET, socket.SOCK_STREAM)
+        except socket.error, msg :
+            print "Failed"
+            sys.exit()
         host = 'localhost'
         port = 12800
-        client.connect((host, port))
+        try :
+            ip = socket.gethostbyname( host )
+            self.sock = ip
+        except socket.gaierror:
+            print "Hostname not resolve exit"
+            sys.exit()
+        client.connect((ip, port))
         data = client.recv(1024)
         label = Label(aff, "TEST")
         label.pack
