@@ -1,6 +1,7 @@
 import socket
 import select
 import sys
+import pprint
 
 class Server :
     host = 'localhost'
@@ -22,22 +23,19 @@ class Server :
 
     def run(self):
         while 1 :
-            (read, write, exc) = select.select( self.clients, [], [] )
-
-            for sock in read:
-                if sock == self.sock:
-                    newsock = self.sock.accept()
-                    self.clients.append( newsock )
-                else:
-                    str = sock.recv(100)
-                    if str == "":
-                        print "empty message"
-                        sock.close
-                    else:
-                        print "Not Empty Value"
+            newsock = self.sock.accept()
+            self.clients.append( newsock )
+            # str = self.sock.recv(100)
+            # pprint.pprint(str)
+            # if str == "":
+                # print "empty message"
+                # self.sock.close
+            # else:
+            print "TEST"
 
 
     def _get_client(self):
         return self.clients
 
 server = Server()
+server.run()
