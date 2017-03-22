@@ -1,28 +1,41 @@
 import socket
+import select
 import sys
 
 class Server :
     host = 'localhost'
     port = 12800
     clients = []
+    sock = ""
 
     def __init__(self):
         try :
-            con = socket.socket( socket.AF_INET, socket.SOCK_STREAM)
+            self.sock = socket.socket( socket.AF_INET, socket.SOCK_STREAM)
         except socket.error, msg :
             print "Failed"
             sys.exit()
-        con.bind((self.host, self.port))
-        con.listen( 5 )
+        self.sock.bind((self.host, self.port))
+        self.sock.listen( 5 )
         print( "this is connected on port {}".format(self.port))
-        link = con.accept()
+        self.clients = [self.sock]
+
+
+    def run(self):
         while 1 :
-            data = link.recv(1024)
-            if not data:
-                rep = "display : {}".format(data)
-                print rep
-            link.send(rep)
-        link.close()
+            (read, write, exc) = select.select( self.clients, [], [] )
+
+            for sock in read:
+                if sock == self.sock:
+                    newsock = self.sock.accept()
+                    self.clients.append( newsock )
+                else:
+                    str = sock.recv(100)
+                    if str == "":
+                        print "empty message"
+                        sock.close
+                    else:
+                        print "Not Empty Value"
+
 
     def _get_client(self):
         return self.clients

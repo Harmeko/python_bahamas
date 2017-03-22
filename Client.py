@@ -40,5 +40,6 @@ class Client :
 
 def Send_Message(event):
     print input_field.get()
+    return "break"
 
 client = Client()
