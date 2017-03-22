@@ -15,12 +15,12 @@ class Server :
         con.bind((self.host, self.port))
         con.listen( 5 )
         print( "this is connected on port {}".format(self.port))
-        link, adress = con.accept()
-        while true :
+        link = con.accept()
+        while 1 :
             data = link.recv(1024)
-            if not data: break
-            rep = "display : {}".format(data)
-            print rep
+            if not data:
+                rep = "display : {}".format(data)
+                print rep
             link.send(rep)
         link.close()
 

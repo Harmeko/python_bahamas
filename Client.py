@@ -9,6 +9,12 @@ class Client :
 
     def __init__(self):
         aff = Tk()
+        input_client = StringVar()
+        input_field = Entry(aff, text=input_client)
+        input_field.pack()
+        frame = Frame(aff, width=400, height=400)
+        frame.bind("<Return>", Send_Message)
+        frame.pack()
         try :
             client = socket.socket( socket.AF_INET, socket.SOCK_STREAM)
         except socket.error, msg :
@@ -24,8 +30,6 @@ class Client :
             sys.exit()
         client.connect((ip, port))
         data = client.recv(1024)
-        label = Label(aff, "TEST")
-        label.pack
         client.close()
         aff.mainloop()
 
@@ -33,5 +37,8 @@ class Client :
         self.name = name
     def _get_name(self):
         return self.name
+
+def Send_Message(event):
+    print input_field.get()
 
 client = Client()
