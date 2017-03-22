@@ -13,7 +13,7 @@ class Client :
         input_field = Entry(aff, text=input_client)
         input_field.pack()
         frame = Frame(aff, width=400, height=400)
-        frame.bind("<Return>", Send_Message)
+        input_field.bind("<Return>", Send_Message)
         frame.pack()
         try :
             client = socket.socket( socket.AF_INET, socket.SOCK_STREAM)
