@@ -5,24 +5,7 @@ import cv2
 import threading
 from PIL import Image
 from PIL import ImageTk
-
-# def getVideo(self, aff):
-#         cv2.namedWindow("preview")
-#         vc = cv2.VideoCapture(0)
-
-#         if vc.isOpened(): # try to get the first frame
-#             rval, frame = vc.read()
-#         else:
-#             rval = False
-
-#         while rval:
-#             cam = Label(aff, image=frame)
-#             cam.pack()
-#             rval, frame = vc.read()
-#             key = cv2.waitKey(20)
-#             if key == 27: # exit on ESC
-#                 break
-#         cv2.destroyWindow("preview")
+import pprint
 
 class Client :
     sock = ""
@@ -38,7 +21,7 @@ class Client :
         self.stopEvent = None
         self.panel = None
         aff = Tk()
-        self.frame = Frame(aff, width=400, height=400)
+        self.frame = Frame(aff, width=200, height=50)
 
         input_client = StringVar()
 
@@ -52,21 +35,15 @@ class Client :
 
         self.frame.pack()
         try :
-            client = socket.socket( socket.AF_INET, socket.SOCK_STREAM)
+            self.sock = socket.socket( socket.AF_INET, socket.SOCK_STREAM)
         except socket.error, msg :
             print "Failed"
             sys.exit()
         host = 'localhost'
         port = 12800
-        try :
-            ip = socket.gethostbyname( host )
-            self.sock = ip
-        except socket.gaierror:
-            print "Hostname not resolve exit"
-            sys.exit()
-        client.connect((ip, port))
+        ip = socket.gethostbyname( host )
+        self.sock.connect((ip, port))
         # data = client.recv(1024)
-        client.close()
         aff.mainloop()
 
     def _set_name(self, name):
@@ -81,25 +58,39 @@ class Client :
     def videoLoop(self):
         try:
             while not self.stopEvent.is_set():
-                self.frame = self.vs.read()
-
+                self.frame = self.vs.read()[1]
+                key = cv2.waitKey(20)
+                if key == 27: # exit on ESC
+                    cv2.destroyWindow("preview")
+                # # pprint.pprint(self.frame)
                 # image = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB)
-                # image = Image.fromarray(image)
-                image = ImageTk.PhotoImage(image)
+                # # image = cv2.resize(image, (500, 500))
+                # image = Image.fromarray(image[1])
+                # # image = image.resize((250, 250))
+                # image = ImageTk.PhotoImage(image)
 
-                if self.panel is None:
-                    self.panel = tki.Label(image=image)
-                    self.panel.image = image
-                    self.panel.pack(side="left", padx=10, pady=10)
-
-                else:
-                    self.panel.configure(image=image)
-                    self.panel.image = image
+                # if self.panel is None:
+                #     self.panel = Label(image=image, width=400, height=400)
+                #     self.panel.image = image
+                #     self.panel.pack(side="left")
+                # else:
+                #     self.panel.configure(image=image)
+                #     self.panel.image = image
+                cv2.imshow("test", self.frame)
 
         except RuntimeError, e:
             print("[INFO] caught a RuntimeError")
 
+    def getChannels(self):
+        try:
+            self.sock.send("\o/getChannels")
+        except:
+            print "ERROR: CODE 7070, useless dev."
+
+
 vc = cv2.VideoCapture(0)
+vc.set(3, 500)
+vc.set(4, 500)
 
 
 client = Client(vc)
