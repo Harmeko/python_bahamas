@@ -7,6 +7,9 @@ from PIL import Image
 from PIL import ImageTk
 import pprint
 
+HOST = 'localhost'
+PORT = 12800
+
 class Client :
     sock = ""
     name = ""
@@ -15,9 +18,12 @@ class Client :
     stopEvent = ""
     panel = ""
     frame = ""
+    activeChan = ""
+    channels = []
+    ip = ""
 
-    def __init__(self, vs):
-        self.vs = vs
+    def __init__(self):
+        # self.vs = vs
         self.stopEvent = None
         self.panel = None
         aff = Tk()
@@ -29,9 +35,9 @@ class Client :
         self.input_field.pack()
         self.input_field.bind("<Return>", self.Send_Message)
 
-        self.stopEvent = threading.Event()
-        self.thread = threading.Thread(target=self.videoLoop, args=())
-        self.thread.start()
+        # self.stopEvent = threading.Event()
+        # self.thread = threading.Thread(target=self.videoLoop, args=())
+        # self.thread.start()
 
         self.frame.pack()
         try :
@@ -39,10 +45,8 @@ class Client :
         except socket.error, msg :
             print "Failed"
             sys.exit()
-        host = 'localhost'
-        port = 12800
-        ip = socket.gethostbyname( host )
-        self.sock.connect((ip, port))
+        self.ip = socket.gethostbyname( HOST )
+        self.sock.connect((self.ip, PORT))
         # data = client.recv(1024)
         aff.mainloop()
 
@@ -52,45 +56,50 @@ class Client :
         return self.name
 
     def Send_Message(self, event):
-        print self.input_field.get()
-        return "break"
-
-    def videoLoop(self):
-        try:
-            while not self.stopEvent.is_set():
-                self.frame = self.vs.read()[1]
-                key = cv2.waitKey(20)
-                if key == 27: # exit on ESC
-                    cv2.destroyWindow("preview")
-                # # pprint.pprint(self.frame)
-                # image = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB)
-                # # image = cv2.resize(image, (500, 500))
-                # image = Image.fromarray(image[1])
-                # # image = image.resize((250, 250))
-                # image = ImageTk.PhotoImage(image)
-
-                # if self.panel is None:
-                #     self.panel = Label(image=image, width=400, height=400)
-                #     self.panel.image = image
-                #     self.panel.pack(side="left")
-                # else:
-                #     self.panel.configure(image=image)
-                #     self.panel.image = image
-                cv2.imshow("test", self.frame)
-
-        except RuntimeError, e:
-            print("[INFO] caught a RuntimeError")
-
-    def getChannels(self):
-        try:
-            self.sock.send("\o/getChannels")
+        str = self.input_field.get()
+        print str
+        try :
+            self.sock.sendall(str)
+            test = self.sock.recv(1024)
+            pprint.pprint(test)
         except:
-            print "ERROR: CODE 7070, useless dev."
+            print "LOL UNE ERREUR"
+
+    # def videoLoop(self):
+    #     try:
+    #         while not self.stopEvent.is_set():
+    #             self.frame = self.vs.read()[1]
+    #             key = cv2.waitKey(20)
+    #             # # pprint.pprint(self.frame)
+    #             # image = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB)
+    #             # # image = cv2.resize(image, (500, 500))
+    #             # image = Image.fromarray(image[1])
+    #             # # image = image.resize((250, 250))
+    #             # image = ImageTk.PhotoImage(image)
+
+    #             # if self.panel is None:
+    #             #     self.panel = Label(image=image, width=400, height=400)
+    #             #     self.panel.image = image
+    #             #     self.panel.pack(side="left")
+    #             # else:
+    #             #     self.panel.configure(image=image)
+    #             #     self.panel.image = image
+    #             cv2.imshow("test", self.frame)
+
+    #     except RuntimeError, e:
+    #         print("[INFO] caught a RuntimeError")
+
+    # def getChannels(self):
+    #     try:
+    #         self.sock.send("\o/getChannels")
+    #     except:
+    #         print "ERROR: CODE 7070, useless dev."
 
 
-vc = cv2.VideoCapture(0)
-vc.set(3, 500)
-vc.set(4, 500)
+# vc = cv2.VideoCapture(0)
+# vc.set(3, 500)
+# vc.set(4, 500)
 
 
-client = Client(vc)
+# client = Client(vc)
+client = Client()
