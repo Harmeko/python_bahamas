@@ -26,9 +26,18 @@ class Server(SocketServer.BaseRequestHandler):
         # self.clients = [self.sock]
 
     def handle(self):
-        self.data = self.request.recv(100).strip()
-        pprint.pprint(self.data)
-        self.request.send(self.data)
+        readsock = select.select(self.clients, [], [])
+        for sock in readsock:
+            pprint.pprint(sock)
+            if sock == self.clients[0]:
+                self.clients.append( self.request )
+            else:
+                try:
+                    self.data = self.request.recv(100).strip()
+                    pprint.pprint(self.data)
+                    self.request.send(self.data)
+                except Exeption as e:
+                    print e
 
 
 if __name__ == "__main__":
