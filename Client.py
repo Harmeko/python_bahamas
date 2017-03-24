@@ -46,7 +46,6 @@ class Client :
             print "Failed"
             sys.exit()
         self.ip = socket.gethostbyname( HOST )
-        self.sock.connect((self.ip, PORT))
         # data = client.recv(1024)
         aff.mainloop()
 
@@ -56,14 +55,16 @@ class Client :
         return self.name
 
     def Send_Message(self, event):
+        self.sock.connect((self.ip, PORT))
         str = self.input_field.get()
         print str
         try :
-            self.sock.sendall(str)
+            self.sock.send(str)
             test = self.sock.recv(1024)
             pprint.pprint(test)
         except:
             print "LOL UNE ERREUR"
+        self.sock.close()
 
     # def videoLoop(self):
     #     try:

@@ -28,6 +28,7 @@ class Server(SocketServer.BaseRequestHandler):
     def handle(self):
         self.data = self.request.recv(100).strip()
         pprint.pprint(self.data)
+        self.request.send(self.data)
 
 
 if __name__ == "__main__":
