@@ -2,6 +2,7 @@ import SocketServer
 import select
 import sys
 import pprint
+import json
 
 # host = 'localhost'
 # port = 12800
@@ -12,6 +13,12 @@ class Server(SocketServer.BaseRequestHandler):
     request = None
 
 
+    def __init__(self, request, client_address, server):
+        pprint.pprint(request)
+        pprint.pprint(client_address)
+        self.clients.append( client_address )
+        SocketServer.BaseRequestHandler.__init__(self, request, client_address, server)
+        return
     # def __init__(self):
     #     self.request = request
     #     self.handle()
@@ -26,18 +33,20 @@ class Server(SocketServer.BaseRequestHandler):
         # self.clients = [self.sock]
 
     def handle(self):
-        readsock = select.select(self.clients, [], [])
-        for sock in readsock:
-            pprint.pprint(sock)
-            if sock == self.clients[0]:
-                self.clients.append( self.request )
-            else:
-                try:
-                    self.data = self.request.recv(100).strip()
-                    pprint.pprint(self.data)
-                    self.request.send(self.data)
-                except Exeption as e:
-                    print e
+        pprint.pprint(self.clients)
+        while self.data != 0:
+            self.data = self.request.recv(100).strip()
+            if self.data == "/list":
+                self.request.send( json.dumps(self.clients) )
+            else :
+                self.request.send(self.data)
+            
+            pprint.pprint(self.data)
+            # if self.data == "/list"
+            #     for i in self.clients
+
+                # return self.request.send(listclients)
+
 
 
 if __name__ == "__main__":
